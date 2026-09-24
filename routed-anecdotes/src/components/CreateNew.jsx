@@ -10,9 +10,9 @@ const CreateNew = ({ addNew }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: content.input.value,
+      author: author.input.value,
+      info: info.input.value,
       votes: 0
     })
     navigate("/")
@@ -32,24 +32,21 @@ const CreateNew = ({ addNew }) => {
           content
           <input
             name="content"
-            value={content.value}
-            onChange={content.onChange}
+            {...content.input}
           />
         </div>
         <div>
           author
           <input
             name="author"
-            value={author.value}
-            onChange={author.onChange}
+            {...author.input}
           />
         </div>
         <div>
           url for more info
           <input
             name="info"
-            value={info.value}
-            onChange={info.onChange}
+            {...info.input}
           />
         </div>
         <button>create</button>
