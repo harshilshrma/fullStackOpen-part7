@@ -19,8 +19,8 @@ const CreateNew = ({ addNew }) => {
   }
 
   const handleReset = () => {
-    content.reset() 
-    author.reset() 
+    content.reset()
+    author.reset()
     info.reset()
   }
 
