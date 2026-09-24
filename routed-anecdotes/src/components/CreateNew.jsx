@@ -9,13 +9,19 @@ const CreateNew = ({ addNew }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    addNew({ 
-      content: content.value, 
-      author: author.value, 
-      info: info.value, 
-      votes: 0 
+    addNew({
+      content: content.value,
+      author: author.value,
+      info: info.value,
+      votes: 0
     })
     navigate("/")
+  }
+
+  const handleReset = () => {
+    content.reset() 
+    author.reset() 
+    info.reset()
   }
 
   return (
@@ -48,6 +54,7 @@ const CreateNew = ({ addNew }) => {
         </div>
         <button>create</button>
       </form>
+      <button onClick={handleReset}>reset</button>
     </div>
   )
 }
