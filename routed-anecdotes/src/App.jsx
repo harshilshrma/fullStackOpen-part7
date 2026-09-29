@@ -8,9 +8,7 @@ import CreateNew from './components/CreateNew'
 import { useAnecdotes } from './hooks'
 
 const App = () => {
-  const { anecdotes } = useAnecdotes()
-
-  const addAnecdote = () => {}
+  const { anecdotes, addAnecdote } = useAnecdotes()
 
   return (
     <Router>
