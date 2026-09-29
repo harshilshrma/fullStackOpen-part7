@@ -10,7 +10,7 @@ const AnecdoteList = () => {
         {anecdotes.map(anecdote =>
           <div key={anecdote.id} style={{ display: 'flex', gap: '0.25rem' }}>
             <li>{anecdote.content}
-            <button onClick={() => deleteAnecdote(anecdote)}>delete</button>
+              <button onClick={() => deleteAnecdote(anecdote)}>delete</button>
             </li>
           </div>
         )}
