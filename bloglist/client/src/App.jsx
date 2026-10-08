@@ -14,18 +14,14 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import ErrorBoundary from "./components/ErrorBoundary";
 import CatchAll from "./components/CatchAll";
+import { useNotification, useNotificationActions } from "./store";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [notification, setNotification] = useState(null);
+  const notification = useNotification()
+  const { setAndRemoveNotification } = useNotificationActions() 
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  const clearNotification = () => {
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
-  };
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -46,12 +42,11 @@ const App = () => {
       const user = await loginService.login({ username, password });
       setUser(user);
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
-      setNotification(null);
+      setAndRemoveNotification(null);
       navigate("/");
       return true;
     } catch (error) {
-      setNotification({ text: error.response.data.error, type: "error" });
-      clearNotification();
+      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
       return false;
     }
   };
@@ -60,7 +55,7 @@ const App = () => {
     event.preventDefault();
     window.localStorage.removeItem("loggedUser");
     setUser(null);
-    setNotification(null);
+    setAndRemoveNotification(null);
     navigate("/");
   };
 
@@ -79,8 +74,7 @@ const App = () => {
       newBlogsArray.sort((a, b) => b.likes - a.likes);
       setBlogs(newBlogsArray);
     } catch (error) {
-      setNotification({ text: error.response.data.error, type: "error" });
-      clearNotification();
+      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
     }
   };
 
@@ -89,14 +83,13 @@ const App = () => {
       await blogService.removeBlog(blog.id, user.token);
       setBlogs(blogs.filter((b) => b.id !== blog.id));
       navigate("/");
-      setNotification({
+      setAndRemoveNotification({
         text: `Blog "${blog.title}" by ${blog.author} was removed!`,
         type: "info",
       });
-      clearNotification();
+    
     } catch (error) {
-      setNotification({ text: error.response.data.error, type: "error" });
-      clearNotification();
+      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
     }
   };
 
@@ -111,16 +104,14 @@ const App = () => {
       newBlogsArray.sort((a, b) => b.likes - a.likes);
       setBlogs(newBlogsArray);
 
-      setNotification({
+      setAndRemoveNotification({
         text: `A new blog "${title}" by ${author} has been added!`,
         type: "success",
       });
       navigate("/");
-      clearNotification();
       return true;
     } catch (error) {
-      setNotification({ text: error.response.data.error, type: "error" });
-      clearNotification();
+      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
       return false;
     }
   };
@@ -162,7 +153,7 @@ const App = () => {
         </AppBar>
 
         <ErrorBoundary>
-          <Notification notification={notification} />
+          { notification && <Notification /> }
 
           <Routes>
             <Route
