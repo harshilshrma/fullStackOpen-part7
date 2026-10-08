@@ -16,6 +16,7 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import ErrorBoundary from './components/ErrorBoundary'
+import CatchAll from './components/CatchAll'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -161,6 +162,9 @@ const App = () => {
             } />
             <Route path="/create" element={
               <CreateNewBlogForm user={user} addBlog={addNewBlog} />
+            } />
+            <Route path="*" element={
+              <CatchAll />
             } />
           </Routes>
         </ErrorBoundary>
