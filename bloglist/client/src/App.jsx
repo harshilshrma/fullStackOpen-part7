@@ -15,6 +15,7 @@ import Notification from './components/Notification'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -139,28 +140,30 @@ const App = () => {
           </Toolbar>
         </AppBar>
 
-        <Notification notification={notification} />
+        <ErrorBoundary>
+          <Notification notification={notification} />
 
-        <Routes>
-          <Route path="/" element={
-            <Home
-              user={user}
-              blogs={blogs}
-              handleLike={handleLike}
-              handleRemoveBlog={handleRemoveBlog}
-              handleBlogVisit={handleBlogVisit}
-            />
-          } />
-          <Route path="/login" element={
-            <Login user={user} handleLogin={handleLogin} />
-          } />
-          <Route path="/blogs/:id" element={
-            <SingleBlog blogs={blogs} user={user} handleLike={handleLike} handleRemoveBlog={handleRemoveBlog} />
-          } />
-          <Route path="/create" element={
-            <CreateNewBlogForm user={user} addBlog={addNewBlog} />
-          } />
-        </Routes>
+          <Routes>
+            <Route path="/" element={
+              <Home
+                user={user}
+                blogs={blogs}
+                handleLike={handleLike}
+                handleRemoveBlog={handleRemoveBlog}
+                handleBlogVisit={handleBlogVisit}
+              />
+            } />
+            <Route path="/login" element={
+              <Login user={user} handleLogin={handleLogin} />
+            } />
+            <Route path="/blogs/:id" element={
+              <SingleBlog blogs={blogs} user={user} handleLike={handleLike} handleRemoveBlog={handleRemoveBlog} />
+            } />
+            <Route path="/create" element={
+              <CreateNewBlogForm user={user} addBlog={addNewBlog} />
+            } />
+          </Routes>
+        </ErrorBoundary>
       </div>
     </div>
   )
