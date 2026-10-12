@@ -1,62 +1,36 @@
-import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import Toolbar from "@mui/material/Toolbar";
+import { useEffect } from "react";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
+import CatchAll from "./components/CatchAll";
+import CreateNewBlogForm from "./components/CreateNewBlogForm";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import SingleBlog from "./components/SingleBlog";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import CreateNewBlogForm from "./components/CreateNewBlogForm";
 import Notification from "./components/Notification";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
-import ErrorBoundary from "./components/ErrorBoundary";
-import CatchAll from "./components/CatchAll";
-import { useNotification, useNotificationActions } from "./store";
+import SingleBlog from "./components/SingleBlog";
+import blogService from "./services/blogs";
+import { useBlogs, useBlogsActions, useNotification, useNotificationActions, userUserActions, useUser } from "./store";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const notification = useNotification()
   const { setAndRemoveNotification } = useNotificationActions() 
-  const [user, setUser] = useState(null);
+  const user = useUser()
+  const blogs = useBlogs()
+  const { initializeBlogs, addNewBlog } = useBlogsActions()
+  const { initializeUser, handleUserLogin, handleUserLogout } = userUserActions()
   const navigate = useNavigate();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-    });
-  }, []);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-    }
-  }, []);
-
-  const handleLogin = async (username, password) => {
-    try {
-      const user = await loginService.login({ username, password });
-      setUser(user);
-      window.localStorage.setItem("loggedUser", JSON.stringify(user));
-      setAndRemoveNotification(null);
-      navigate("/");
-      return true;
-    } catch (error) {
-      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
-      return false;
-    }
-  };
+    initializeBlogs()
+    initializeUser()
+  }, [initializeBlogs, initializeUser]);
 
   const handleLogout = (event) => {
-    event.preventDefault();
-    window.localStorage.removeItem("loggedUser");
-    setUser(null);
-    setAndRemoveNotification(null);
-    navigate("/");
+    handleUserLogout(event)
+    navigate("/")
   };
 
   const handleLike = async (blog) => {
@@ -90,29 +64,6 @@ const App = () => {
     
     } catch (error) {
       setAndRemoveNotification({ text: error.response.data.error, type: "error" });
-    }
-  };
-
-  const addNewBlog = async (title, author, url, likes) => {
-    try {
-      const response = await blogService.addBlog(
-        { title, author, url, likes },
-        user.token,
-      );
-
-      const newBlogsArray = blogs.concat(response);
-      newBlogsArray.sort((a, b) => b.likes - a.likes);
-      setBlogs(newBlogsArray);
-
-      setAndRemoveNotification({
-        text: `A new blog "${title}" by ${author} has been added!`,
-        type: "success",
-      });
-      navigate("/");
-      return true;
-    } catch (error) {
-      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
-      return false;
     }
   };
 
@@ -170,7 +121,7 @@ const App = () => {
             />
             <Route
               path="/login"
-              element={<Login user={user} handleLogin={handleLogin} />}
+              element={<Login />}
             />
             <Route
               path="/blogs/:id"
@@ -185,7 +136,7 @@ const App = () => {
             />
             <Route
               path="/create"
-              element={<CreateNewBlogForm user={user} addBlog={addNewBlog} />}
+              element={<CreateNewBlogForm />}
             />
             <Route path="*" element={<CatchAll />} />
           </Routes>

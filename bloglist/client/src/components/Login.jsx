@@ -1,17 +1,23 @@
+import { Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { userUserActions, useUser } from "../store";
 
-const Login = ({ user, handleLogin }) => {
+const Login = () => {
+  const navigate = useNavigate()
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { handleUserLogin } = userUserActions()
+  const user = useUser()
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    const success = await handleLogin(username, password);
+    const success = await handleUserLogin(username, password);
 
     if (success) {
       setUsername("");
       setPassword("");
+      navigate("/");
     }
   };
 

@@ -1,23 +1,27 @@
+import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button } from "@mui/material";
+import { useBlogsActions, useUser } from "../store";
 
-const CreateNewBlogForm = ({ user, addBlog }) => {
+const CreateNewBlogForm = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [likes, setLikes] = useState("");
+  const { addNewBlog } = useBlogsActions()
+  const user = useUser()
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const success = await addBlog(title, author, url, likes);
+    const success = await addNewBlog(title, author, url, likes);
 
     if (success) {
       setTitle("");
       setAuthor("");
       setUrl("");
       setLikes("");
+      navigate("/");
     }
   };
 
