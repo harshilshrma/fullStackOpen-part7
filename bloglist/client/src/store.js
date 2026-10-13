@@ -127,9 +127,9 @@ const useBlogsStore = create((set) => ({
                     type: "info",
                 });
             } catch (error) {
-                setAndRemoveNotification({ 
-                    text: error.response?.data?.error || error.message || 'Something went wrong', 
-                    type: "error" 
+                setAndRemoveNotification({
+                    text: error.response?.data?.error || error.message || 'Something went wrong',
+                    type: "error"
                 });
             }
         }
