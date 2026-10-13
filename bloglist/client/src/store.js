@@ -79,19 +79,58 @@ const useBlogsStore = create((set) => ({
                     user.token,
                 );
 
-                set((state) => ({ 
+                set((state) => ({
                     blogs: state.blogs.concat(newBlog).toSorted(sortByLikes)
                 }))
-                
+
                 setAndRemoveNotification({
                     text: `A new blog "${title}" by ${author} has been added!`,
                     type: "success",
                 });
-                
+
                 return true;
             } catch (error) {
                 setAndRemoveNotification({ text: error.response.data.error, type: "error" });
                 return false;
+            }
+        },
+
+        handleLike: async (blog) => {
+            const { setAndRemoveNotification } = useNotificationStore.getState().actions
+            const updatedBlog = {
+                ...blog,
+                user: blog.user.id,
+                likes: blog.likes + 1,
+            };
+
+            try {
+                const res = await blogService.addLike(updatedBlog);
+                set(state => ({
+                    blogs: state.blogs
+                        .map(blog => blog.id === res.id ? res : blog)
+                        .toSorted(sortByLikes)
+                }))
+            } catch (error) {
+                setAndRemoveNotification({ text: error.response.data.error, type: "error" });
+            }
+        },
+
+        handleRemove: async (blog) => {
+            const user = useUserStore.getState().user
+            const { setAndRemoveNotification } = useNotificationStore.getState().actions
+            try {
+                await blogService.removeBlog(blog.id, user.token);
+                set(state => ({ blogs: state.blogs.filter(b => b.id !== blog.id) }))
+
+                setAndRemoveNotification({
+                    text: `Blog "${blog.title}" by ${blog.author} was removed!`,
+                    type: "info",
+                });
+            } catch (error) {
+                setAndRemoveNotification({ 
+                    text: error.response?.data?.error || error.message || 'Something went wrong', 
+                    type: "error" 
+                });
             }
         }
     }

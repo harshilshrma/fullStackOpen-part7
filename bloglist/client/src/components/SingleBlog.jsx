@@ -1,9 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatUrl } from "../utils";
 import { Button } from "@mui/material";
+import { useBlogsActions, useUser } from "../store";
 
-const SingleBlog = ({ blogs, user, handleLike, handleRemoveBlog }) => {
+const SingleBlog = ({ blogs }) => {
   const blogId = useParams().id;
+  const user = useUser()
+  const { handleLike, handleRemove } = useBlogsActions()
+  const navigate = useNavigate()
 
   const singleBlog = blogs.find((blog) => blog.id === blogId);
   if (!singleBlog) {
@@ -20,9 +24,10 @@ const SingleBlog = ({ blogs, user, handleLike, handleRemoveBlog }) => {
   const showRemoveButton =
     singleBlog.user && user && singleBlog.user.id === user.id;
 
-  const handleRemoveBlogClick = (blog) => {
+  const handleRemoveBlogClick = async (blog) => {
     if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
-      handleRemoveBlog(blog);
+      await handleRemove(blog);
+      navigate("/")
     }
   };
 

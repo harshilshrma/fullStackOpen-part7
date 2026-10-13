@@ -1,16 +1,25 @@
+import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { useBlogsActions } from "../store";
 import { formatUrl } from "../utils";
 
 const Blog = ({
   blog,
-  handleLike,
   user,
   isVisible,
   toggleVisibility,
-  handleBlogVisit,
-  handleRemoveBlogClick,
+  handleBlogVisit
 }) => {
   const showRemoveButton = blog.user && user && blog.user.id === user.id;
+  const { handleLike, handleRemove } = useBlogsActions()
+  const navigate = useNavigate()
+
+  const handleRemoveBlogClick = async (blog) => {
+    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
+      await handleRemove(blog)
+      navigate("/")
+    }
+  };
 
   return (
     <div className="blog-container">

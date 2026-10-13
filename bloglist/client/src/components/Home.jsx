@@ -4,8 +4,6 @@ import Blog from "./Blog";
 const Home = ({
   user,
   blogs,
-  handleLike,
-  handleRemoveBlog,
   handleBlogVisit,
 }) => {
   const [visibilityList, setVisibilityList] = useState([]);
@@ -41,12 +39,6 @@ const Home = ({
     );
   };
 
-  const handleRemoveBlogClick = (blog) => {
-    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
-      handleRemoveBlog(blog);
-    }
-  };
-
   return (
     <div>
       <h2 className="title">Blogs</h2>
@@ -78,9 +70,7 @@ const Home = ({
               <Blog
                 key={blog.id}
                 blog={blog}
-                handleLike={handleLike}
                 user={user}
-                handleRemoveBlogClick={handleRemoveBlogClick}
                 isVisible={isBlogVisible}
                 toggleVisibility={toggleVisibility}
                 handleBlogVisit={handleBlogVisit}

@@ -16,7 +16,7 @@ import { useBlogs, useBlogsActions, useNotification, useNotificationActions, use
 
 const App = () => {
   const notification = useNotification()
-  const { setAndRemoveNotification } = useNotificationActions() 
+  const { setAndRemoveNotification } = useNotificationActions()
   const user = useUser()
   const blogs = useBlogs()
   const { initializeBlogs, addNewBlog } = useBlogsActions()
@@ -31,40 +31,6 @@ const App = () => {
   const handleLogout = (event) => {
     handleUserLogout(event)
     navigate("/")
-  };
-
-  const handleLike = async (blog) => {
-    const updatedBlog = {
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-    };
-
-    try {
-      const response = await blogService.addLike(updatedBlog);
-      const newBlogsArray = blogs.map((blog) =>
-        blog.id === response.id ? response : blog,
-      );
-      newBlogsArray.sort((a, b) => b.likes - a.likes);
-      setBlogs(newBlogsArray);
-    } catch (error) {
-      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
-    }
-  };
-
-  const handleRemoveBlog = async (blog) => {
-    try {
-      await blogService.removeBlog(blog.id, user.token);
-      setBlogs(blogs.filter((b) => b.id !== blog.id));
-      navigate("/");
-      setAndRemoveNotification({
-        text: `Blog "${blog.title}" by ${blog.author} was removed!`,
-        type: "info",
-      });
-    
-    } catch (error) {
-      setAndRemoveNotification({ text: error.response.data.error, type: "error" });
-    }
   };
 
   const handleBlogVisit = (id) => {
@@ -104,7 +70,7 @@ const App = () => {
         </AppBar>
 
         <ErrorBoundary>
-          { notification && <Notification /> }
+          {notification && <Notification />}
 
           <Routes>
             <Route
@@ -113,8 +79,6 @@ const App = () => {
                 <Home
                   user={user}
                   blogs={blogs}
-                  handleLike={handleLike}
-                  handleRemoveBlog={handleRemoveBlog}
                   handleBlogVisit={handleBlogVisit}
                 />
               }
@@ -126,12 +90,7 @@ const App = () => {
             <Route
               path="/blogs/:id"
               element={
-                <SingleBlog
-                  blogs={blogs}
-                  user={user}
-                  handleLike={handleLike}
-                  handleRemoveBlog={handleRemoveBlog}
-                />
+                <SingleBlog blogs={blogs} />
               }
             />
             <Route
